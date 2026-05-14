@@ -1,0 +1,6 @@
+{
+  "name": "Wanderlust Plan",
+  "description": "A beautiful travel plan renderer that parses Markdown and provides weather and outfit suggestions with a calendar overview.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
