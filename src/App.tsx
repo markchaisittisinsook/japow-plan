@@ -5,15 +5,16 @@ import { getEnrichedDayData } from "./services/geminiService";
 import { planMarkdown } from "./data/mockPlan";
 import CalendarItem from "./components/CalendarItem";
 import DayDetails from "./components/DayDetails";
+import HomeView from "./components/HomeView";
 import { motion, AnimatePresence } from "motion/react";
-import { Calendar, Globe2, Menu, X } from "lucide-react";
+import { Calendar, Globe2, Menu, X, Home } from "lucide-react";
 import { format, parseISO } from "date-fns";
-import { Container, Grid, Group, Stack, Text, Title, Badge, Box, AppShell, Burger, ScrollArea } from "@mantine/core";
+import { Container, Grid, Group, Stack, Text, Title, Badge, Box, AppShell, Burger, ScrollArea, UnstyledButton } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
 export default function App() {
   const [plan, setPlan] = useState<TravelPlan | null>(null);
-  const [activeDayIdx, setActiveDayIdx] = useState(0);
+  const [activeDayIdx, setActiveDayIdx] = useState(-1);
   const [enrichedData, setEnrichedData] = useState<Record<string, { weather: WeatherInfo; outfit: OutfitSuggestion }>>({});
   const [loading, setLoading] = useState(false);
   const [opened, { toggle, close }] = useDisclosure();
@@ -23,7 +24,7 @@ export default function App() {
     setPlan(parsed);
   }, []);
 
-  const activeDay = plan?.days[activeDayIdx];
+  const activeDay = activeDayIdx >= 0 ? plan?.days[activeDayIdx] : null;
 
   useEffect(() => {
     if (activeDay && !enrichedData[activeDay.date]) {
@@ -42,7 +43,7 @@ export default function App() {
 
   if (!plan) return (
     <Box h="100vh" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <Text size="xl" fw={900} c="dimmed" style={{ letterSpacing: '0.2em' }}>LOADING...</Text>
+      <Text size="xl" fw={900} c="dimmed" style={{ letterSpacing: '0.2em' }}>กำลังโหลด...</Text>
     </Box>
   );
 
@@ -55,13 +56,13 @@ export default function App() {
         collapsed: { mobile: !opened },
       }}
       padding="0"
-      bg="#F8FAFC"
+      bg="white"
     >
-      <AppShell.Header p="md" hiddenFrom="sm">
+      <AppShell.Header p="md" hiddenFrom="sm" style={{ borderBottom: '1px solid var(--mantine-color-slate-2)' }}>
         <Group h="100%" px="md" justify="space-between">
           <Group gap="sm">
              <Globe2 size={20} color="var(--mantine-color-blue-6)" />
-             <Text fw={900} size="sm">EXPEDITION</Text>
+             <Text fw={900} size="sm">การเดินทาง</Text>
           </Group>
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
         </Group>
@@ -74,14 +75,33 @@ export default function App() {
               <Globe2 color="white" size={20} />
             </Box>
             <Stack gap={0}>
-              <Text size="10px" fw={900} c="dimmed" style={{ letterSpacing: '0.2em' }}>JOURNAL</Text>
-              <Title order={4} fw={900} style={{ letterSpacing: '-0.02em' }}>Expedition V1</Title>
+              <Text size="10px" fw={900} c="dimmed" style={{ letterSpacing: '0.2em' }}>บันทึก</Text>
+              <Title order={4} fw={900} style={{ letterSpacing: '-0.02em' }}>แผนการเดินทาง V1</Title>
             </Stack>
           </Group>
 
           <ScrollArea style={{ flex: 1 }} scrollbarSize={4}>
             <Stack gap="xs">
-              <Text size="xs" fw={900} c="dimmed" mb="xs" style={{ letterSpacing: '0.1em' }} ml="xs">ITINERARY OVERVIEW</Text>
+              <Text size="xs" fw={900} c="dimmed" mb="xs" style={{ letterSpacing: '0.1em' }} ml="xs">เมนูหลัก</Text>
+              
+              <UnstyledButton
+                onClick={() => { setActiveDayIdx(-1); close(); }}
+                style={{
+                  padding: '16px',
+                  borderRadius: '16px',
+                  backgroundColor: activeDayIdx === -1 ? 'var(--mantine-color-blue-6)' : 'transparent',
+                  color: activeDayIdx === -1 ? 'white' : 'var(--mantine-color-slate-9)',
+                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px'
+                }}
+              >
+                <Home size={18} opacity={activeDayIdx === -1 ? 0.8 : 0.5} />
+                <Text size="sm" fw={700}>ภาพรวมแผนการเดินทาง</Text>
+              </UnstyledButton>
+
+              <Text size="xs" fw={900} c="dimmed" mt="md" mb="xs" style={{ letterSpacing: '0.1em' }} ml="xs">กำหนดการ</Text>
               {plan.days.map((day, idx) => (
                 <CalendarItem
                   key={day.date}
@@ -101,9 +121,9 @@ export default function App() {
              <Group justify="space-between">
                <Group gap="xs" opacity={0.5}>
                   <Box w={24} h={24} style={{ border: '2px solid black', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '10px' }}>W</Box>
-                  <Text size="10px" fw={900} style={{ letterSpacing: '0.2em' }}>WANDERLUST</Text>
+                  <Text size="10px" fw={900} style={{ letterSpacing: '0.2em' }}>ผู้ที่รักการเดินทาง</Text>
                </Group>
-               <Badge variant="dot" color="blue" size="xs">V1.0.4</Badge>
+               <Badge variant="dot" color="blue" size="xs">V1.1.0</Badge>
              </Group>
           </Box>
         </Stack>
@@ -117,34 +137,41 @@ export default function App() {
               <Group justify="space-between" align="flex-end" mb={40} wrap="nowrap">
                 <Stack gap="xs">
                   <Group gap={4}>
-                     <Text size="xs" fw={900} c="blue.6" style={{ letterSpacing: '0.1em' }}>CURRENT DESTINATION</Text>
+                     <Text size="xs" fw={900} c="blue.6" style={{ letterSpacing: '0.1em' }}>จุดหมายปลายทางปัจจุบัน</Text>
                   </Group>
                   <Title order={1} fw={900} size="clamp(32px, 5vw, 48px)" style={{ letterSpacing: '-0.04em', lineHeight: 1.1 }}>{plan.title}</Title>
                 </Stack>
                 <Box style={{ flexShrink: 0 }} hiddenFrom="xs">
                    <Badge variant="white" color="slate" size="lg" radius="xl" style={{ border: '1px solid var(--mantine-color-slate-2)', fontWeight: 900 }}>
-                    {plan.days.length} DAYS
+                    {plan.days.length} วัน
                    </Badge>
                 </Box>
                 <Group gap="xs" visibleFrom="xs">
                   <Badge variant="white" color="slate" size="lg" radius="xl" style={{ border: '1px solid var(--mantine-color-slate-2)', fontWeight: 900, letterSpacing: '0.1em' }} p="md">
-                    {plan.days.length} DAYS TOTAL
+                    รวมทั้งหมด {plan.days.length} วัน
                   </Badge>
-                  <Badge variant="light" color="blue" size="lg" radius="xl" style={{ fontWeight: 900 }}>MAIN BRANCH</Badge>
+                  <Badge variant="light" color="blue" size="lg" radius="xl" style={{ fontWeight: 900 }}>สาขาหลัก</Badge>
                 </Group>
               </Group>
 
-              {/* Day Details Rendering Area */}
+              {/* Content Area Rendering Area */}
               <AnimatePresence mode="wait">
-                {activeDay && (
+                {activeDayIdx === -1 ? (
+                  <HomeView 
+                    key="home"
+                    planMarkdown={planMarkdown}
+                    title={plan.title}
+                  />
+                ) : activeDay ? (
                   <DayDetails
+                    key={activeDay.date}
                     day={activeDay}
                     weather={enrichedData[activeDay.date]?.weather || null}
                     outfit={enrichedData[activeDay.date]?.outfit || null}
                     loading={loading}
                     planMarkdown={planMarkdown}
                   />
-                )}
+                ) : null}
               </AnimatePresence>
             </Container>
           </Box>

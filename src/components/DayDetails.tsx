@@ -57,7 +57,7 @@ export default function DayDetails({ day, weather, outfit, loading, planMarkdown
           <Group justify="space-between" align="start">
             <Stack gap={0}>
               <Text size="xs" fw={700} c="blue.1" style={{ textTransform: 'uppercase', letterSpacing: '0.1em' }}>{day.date}</Text>
-              <Title order={3} fw={700}>Weather</Title>
+              <Title order={3} fw={700}>สภาพอากาศ</Title>
             </Stack>
             <Box bg="white/20" p={8} style={{ borderRadius: '12px' }}>
               {loading ? <Sparkles className="animate-pulse" /> : (()=>{
@@ -76,7 +76,7 @@ export default function DayDetails({ day, weather, outfit, loading, planMarkdown
             <Stack gap="md">
                <Group align="baseline" gap="xs">
                   <Text size="60px" fw={900} style={{ letterSpacing: '-0.04em', lineHeight: 1 }}>{weather?.temp || 0}°</Text>
-                  <Text fw={500} size="xl" c="blue.1">{weather?.condition || "Unknown"}</Text>
+                  <Text fw={500} size="xl" c="blue.1">{weather?.condition || "ไม่ทราบข้อมูล"}</Text>
                </Group>
                <Box
                   style={{
@@ -86,15 +86,15 @@ export default function DayDetails({ day, weather, outfit, loading, planMarkdown
                   }}
                >
                   <Box bg="white/10" p="xs" style={{ borderRadius: '12px', textAlign: 'center' }}>
-                    <Text size="10px" fw={900} c="blue.1" style={{ textTransform: 'uppercase' }}>Morning</Text>
+                    <Text size="10px" fw={900} c="blue.1" style={{ textTransform: 'uppercase' }}>เช้า</Text>
                     <Text size="sm" fw={700}>14°</Text>
                   </Box>
                   <Box bg="white/20" p="xs" style={{ borderRadius: '12px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.3)' }}>
-                    <Text size="10px" fw={900} c="blue.1" style={{ textTransform: 'uppercase' }}>Peak</Text>
+                    <Text size="10px" fw={900} c="blue.1" style={{ textTransform: 'uppercase' }}>สูงสุด</Text>
                     <Text size="sm" fw={700}>{weather?.temp}°</Text>
                   </Box>
                   <Box bg="white/10" p="xs" style={{ borderRadius: '12px', textAlign: 'center' }}>
-                    <Text size="10px" fw={900} c="blue.1" style={{ textTransform: 'uppercase' }}>Night</Text>
+                    <Text size="10px" fw={900} c="blue.1" style={{ textTransform: 'uppercase' }}>กลางคืน</Text>
                     <Text size="sm" fw={700}>12°</Text>
                   </Box>
                </Box>
@@ -117,7 +117,7 @@ export default function DayDetails({ day, weather, outfit, loading, planMarkdown
           <Stack gap="xs">
             <Group gap="xs">
               <Shirt size={14} color="var(--mantine-color-blue-6)" />
-              <Text size="10px" fw={900} style={{ textTransform: 'uppercase', letterSpacing: '0.1em' }} c="dimmed">Outfit</Text>
+              <Text size="10px" fw={900} style={{ textTransform: 'uppercase', letterSpacing: '0.1em' }} c="dimmed">การแต่งกาย</Text>
             </Group>
             {loading ? (
               <Stack gap="xs">
@@ -145,39 +145,8 @@ export default function DayDetails({ day, weather, outfit, loading, planMarkdown
         </Box>
       </Box>
 
-      {/* Markdown Source */}
-      <Box style={{ gridColumn: isLarge ? 'span 4' : 'span 12' }}>
-        <Box
-          component={motion.div}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          bg="#0D1117"
-          p="xl"
-          style={{ borderRadius: '24px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', border: '1px solid var(--mantine-color-slate-8)', minHeight: '220px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}
-        >
-          <Group justify="space-between" mb="md" style={{ flexShrink: 0 }}>
-            <Group gap="xs">
-              <Box w={10} h={10} bg="red.6" style={{ borderRadius: '50%', opacity: 0.8 }} />
-              <Box w={10} h={10} bg="yellow.6" style={{ borderRadius: '50%', opacity: 0.8 }} />
-              <Box w={10} h={10} bg="green.6" style={{ borderRadius: '50%', opacity: 0.8 }} />
-              <Group gap={4} ml="xs">
-                <Terminal size={12} color="var(--mantine-color-slate-5)" />
-                <Text size="xs" fw={700} c="dimmed" style={{ letterSpacing: '-0.02em', textTransform: 'uppercase' }}>plan.md</Text>
-              </Group>
-            </Group>
-          </Group>
-          <Box style={{ overflowY: 'auto', flex: 1 }}>
-             <Text size="xs" ff="JetBrains Mono" c="slate.4" style={{ whiteSpace: 'pre-wrap', opacity: 0.8 }}>
-               {planMarkdown.split('\n').filter(l => l.trim() !== '').slice(0, 10).join('\n')}
-               {"\n"}...
-             </Text>
-          </Box>
-        </Box>
-      </Box>
-
       {/* Activity Details */}
-      <Box style={{ gridColumn: isLarge ? 'span 8' : 'span 12' }}>
+      <Box style={{ gridColumn: 'span 12' }}>
         <Box
           component={motion.div}
           key={`details-${day.date}`}
@@ -204,14 +173,14 @@ export default function DayDetails({ day, weather, outfit, loading, planMarkdown
               }}
             >
               <Stack gap="xl">
-                <Text size="xs" fw={900} c="dimmed" style={{ textTransform: 'uppercase', letterSpacing: '0.25em', borderBottom: '1px solid var(--mantine-color-slate-1)', paddingBottom: '8px' }}>Schedule</Text>
+                <Text size="xs" fw={900} c="dimmed" style={{ textTransform: 'uppercase', letterSpacing: '0.25em', borderBottom: '1px solid var(--mantine-color-slate-1)', paddingBottom: '8px' }}>กำหนดการ</Text>
                 <Stack gap="xl">
                   {day.activities.map((activity, idx) => (
                     <Group key={idx} align="start" gap="md">
                       <Box w={4} bg="blue.6" style={{ borderRadius: '100px', height: '40px' }} />
                       <Stack gap={2}>
                         <Text size="sm" fw={700} style={{ lineHeight: 1.2 }}>{activity}</Text>
-                        <Text size="10px" c="dimmed">Scheduled for this period.</Text>
+                        <Text size="10px" c="dimmed">กิจกรรมในช่วงเวลานี้</Text>
                       </Stack>
                     </Group>
                   ))}
@@ -219,7 +188,7 @@ export default function DayDetails({ day, weather, outfit, loading, planMarkdown
               </Stack>
 
               <Stack gap="xl">
-                <Text size="xs" fw={900} c="dimmed" style={{ textTransform: 'uppercase', letterSpacing: '0.25em', borderBottom: '1px solid var(--mantine-color-slate-1)', paddingBottom: '8px' }}>Notes</Text>
+                <Text size="xs" fw={900} c="dimmed" style={{ textTransform: 'uppercase', letterSpacing: '0.25em', borderBottom: '1px solid var(--mantine-color-slate-1)', paddingBottom: '8px' }}>บันทึกข้อมูล</Text>
                 <Paper bg="slate.0" p="xl" radius="32px" style={{ border: '1px dashed var(--mantine-color-slate-2)' }}>
                   <Box style={{ fontStyle: 'italic', color: 'var(--mantine-color-slate-6)', fontSize: '14px' }}>
                     <ReactMarkdown>{day.description}</ReactMarkdown>
@@ -231,7 +200,7 @@ export default function DayDetails({ day, weather, outfit, loading, planMarkdown
         </Box>
       </Box>
 
-      {/* Support Card */}
+      {/* Support Card - Spanning 12 now or 4 depending on preference, let's keep it 4 but maybe centered or tucked away */}
       <Box style={{ gridColumn: isLarge ? 'span 4' : 'span 12' }}>
         <Box
           component={motion.div}
@@ -246,8 +215,8 @@ export default function DayDetails({ day, weather, outfit, loading, planMarkdown
               <ShieldCheck size={20} />
             </Box>
             <Stack gap={0}>
-              <Text size="sm" fw={900} c="emerald.9" style={{ textTransform: 'uppercase' }}>Secure Itinerary</Text>
-              <Text size="xs" c="emerald.7" style={{ opacity: 0.7 }}>Verified by Wanderlust Agent</Text>
+              <Text size="sm" fw={900} c="emerald.9" style={{ textTransform: 'uppercase' }}>แผนที่ปลอดภัย</Text>
+              <Text size="xs" c="emerald.7" style={{ opacity: 0.7 }}>ตรวจสอบโดยตัวแทน Wanderlust</Text>
             </Stack>
           </Group>
         </Box>

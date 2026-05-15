@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { format, parseISO } from "date-fns";
+import { th } from "date-fns/locale";
 import { TravelDay } from "../types";
 import { UnstyledButton, Text, Box, Group, Stack } from "@mantine/core";
 
@@ -13,8 +14,8 @@ interface CalendarItemProps {
 export default function CalendarItem({ day, index, isActive, onClick }: CalendarItemProps) {
   const date = parseISO(day.date);
   const dayNum = format(date, "dd");
-  const weekday = format(date, "EEE");
-  const month = format(date, "MMM");
+  const weekday = format(date, "EEE", { locale: th });
+  const month = format(date, "MMM", { locale: th });
 
   return (
     <UnstyledButton
@@ -53,7 +54,7 @@ export default function CalendarItem({ day, index, isActive, onClick }: Calendar
 
         <Box style={{ flex: 1, overflow: 'hidden' }}>
           <Text size="xs" fw={900} style={{ textTransform: 'uppercase', letterSpacing: '0.1em' }} opacity={isActive ? 0.8 : 0.5} mb={2}>
-            Day {index + 1}
+            วันที่ {index + 1}
           </Text>
           <Text size="sm" fw={700} style={{ lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {day.title}

@@ -7,7 +7,7 @@ export async function getEnrichedDayData(day: TravelDay): Promise<{ weather: Wea
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
-      contents: `Provide weather information and outfit suggestions for a travel day in ${day.title} on ${day.date}.
+      contents: `Provide weather information and outfit suggestions in Thai language for a travel day in ${day.title} on ${day.date}.
       Activities: ${day.activities.join(", ")}
       Plan details: ${day.description}`,
       config: {
@@ -19,7 +19,7 @@ export async function getEnrichedDayData(day: TravelDay): Promise<{ weather: Wea
               type: Type.OBJECT,
               properties: {
                 temp: { type: Type.NUMBER, description: "Temperature in Celsius" },
-                condition: { type: Type.STRING, description: "Weather condition (e.g. Sunny, Cloudy, Rain)" },
+                condition: { type: Type.STRING, description: "Weather condition in Thai (e.g. แดดจัด, มีเมฆมาก, ฝนตก)" },
                 icon: { type: Type.STRING, description: "Lucide icon name (e.g. Sun, Cloud, CloudRain)" },
               },
               required: ["temp", "condition", "icon"],
@@ -27,10 +27,10 @@ export async function getEnrichedDayData(day: TravelDay): Promise<{ weather: Wea
             outfit: {
               type: Type.OBJECT,
               properties: {
-                top: { type: Type.STRING },
-                bottom: { type: Type.STRING },
-                accessories: { type: Type.ARRAY, items: { type: Type.STRING } },
-                reason: { type: Type.STRING },
+                top: { type: Type.STRING, description: "Top clothing in Thai" },
+                bottom: { type: Type.STRING, description: "Bottom clothing in Thai" },
+                accessories: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Accessories in Thai" },
+                reason: { type: Type.STRING, description: "Reason for the suggestion in Thai" },
               },
               required: ["top", "bottom", "accessories", "reason"],
             },
@@ -44,10 +44,10 @@ export async function getEnrichedDayData(day: TravelDay): Promise<{ weather: Wea
     return data;
   } catch (error) {
     console.error("Error fetching Gemini data:", error);
-    // Fallback data
+    // Fallback data in Thai
     return {
-      weather: { temp: 20, condition: "Sunny", icon: "Sun" },
-      outfit: { top: "Light jacket", bottom: "Comfortable jeans", accessories: ["Sunglasses"], reason: "General comfortable travel wear." }
+      weather: { temp: 20, condition: "แดดจัด", icon: "Sun" },
+      outfit: { top: "เสื้อแจ็คเก็ตแบบบาง", bottom: "กางเกงยีนส์ที่ใส่สบาย", accessories: ["แว่นกันแดด"], reason: "ชุดเดินทางทั่วไปที่เน้นความคล่องตัวและสบายตัว" }
     };
   }
 }
