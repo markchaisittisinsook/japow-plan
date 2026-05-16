@@ -1,9 +1,29 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { WeatherInfo, OutfitSuggestion, TravelDay } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+let aiInstance: GoogleGenAI | null = null;
+
+function getAi() {
+  if (aiInstance) return aiInstance;
+  const key = process.env.GEMINI_API_KEY;
+  if (!key || key === "undefined") {
+    return null;
+  }
+  aiInstance = new GoogleGenAI({ apiKey: key });
+  return aiInstance;
+}
 
 export async function getEnrichedDayData(day: TravelDay): Promise<{ weather: WeatherInfo; outfit: OutfitSuggestion }> {
+  const ai = getAi();
+  
+  if (!ai) {
+    // Return fallback data immediately if no API Key
+    return {
+      weather: { temp: 20, condition: "แดดจัด", icon: "Sun" },
+      outfit: { top: "เสื้อแจ็คเก็ตแบบบาง", bottom: "กางเกงยีนส์ที่ใส่สบาย", accessories: ["แว่นกันแดด"], reason: "ใช้งานข้อมูลพื้นฐาน (ไม่มี API Key)" }
+    };
+  }
+
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
