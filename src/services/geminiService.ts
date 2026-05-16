@@ -1,73 +1,47 @@
-import { GoogleGenAI, Type } from "@google/genai";
-import { WeatherInfo, OutfitSuggestion, TravelDay } from "../types";
+import { TravelDay, WeatherInfo, OutfitSuggestion } from "../types";
 
-let aiInstance: GoogleGenAI | null = null;
-
-function getAi() {
-  if (aiInstance) return aiInstance;
-  const key = process.env.GEMINI_API_KEY;
-  if (!key || key === "undefined") {
-    return null;
-  }
-  aiInstance = new GoogleGenAI({ apiKey: key });
-  return aiInstance;
-}
+// Get the backend API URL (configured via env or default)
+const getBackendURL = () => {
+  return import.meta.env.VITE_API_URL || "http://localhost:8080";
+};
 
 export async function getEnrichedDayData(day: TravelDay): Promise<{ weather: WeatherInfo; outfit: OutfitSuggestion }> {
-  const ai = getAi();
-  
-  if (!ai) {
-    // Return fallback data immediately if no API Key
-    return {
-      weather: { temp: 20, condition: "แดดจัด", icon: "Sun" },
-      outfit: { top: "เสื้อแจ็คเก็ตแบบบาง", bottom: "กางเกงยีนส์ที่ใส่สบาย", accessories: ["แว่นกันแดด"], reason: "ใช้งานข้อมูลพื้นฐาน (ไม่มี API Key)" }
-    };
-  }
-
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: `Provide weather information and outfit suggestions in Thai language for a travel day in ${day.title} on ${day.date}.
-      Activities: ${day.activities.join(", ")}
-      Plan details: ${day.description}`,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            weather: {
-              type: Type.OBJECT,
-              properties: {
-                temp: { type: Type.NUMBER, description: "Temperature in Celsius" },
-                condition: { type: Type.STRING, description: "Weather condition in Thai (e.g. แดดจัด, มีเมฆมาก, ฝนตก)" },
-                icon: { type: Type.STRING, description: "Lucide icon name (e.g. Sun, Cloud, CloudRain)" },
-              },
-              required: ["temp", "condition", "icon"],
-            },
-            outfit: {
-              type: Type.OBJECT,
-              properties: {
-                top: { type: Type.STRING, description: "Top clothing in Thai" },
-                bottom: { type: Type.STRING, description: "Bottom clothing in Thai" },
-                accessories: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Accessories in Thai" },
-                reason: { type: Type.STRING, description: "Reason for the suggestion in Thai" },
-              },
-              required: ["top", "bottom", "accessories", "reason"],
-            },
-          },
-          required: ["weather", "outfit"],
-        },
+    const backendURL = getBackendURL();
+    const response = await fetch(`${backendURL}/api/gh-pages/travel/enrich-day`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
+      body: JSON.stringify({
+        title: day.title,
+        date: day.date,
+        description: day.description,
+        activities: day.activities,
+      }),
     });
 
-    const data = JSON.parse(response.text || "{}");
+    if (!response.ok) {
+      console.error(`Backend error: ${response.status} ${response.statusText}`);
+      return getFallbackData();
+    }
+
+    const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error fetching Gemini data:", error);
-    // Fallback data in Thai
-    return {
-      weather: { temp: 20, condition: "แดดจัด", icon: "Sun" },
-      outfit: { top: "เสื้อแจ็คเก็ตแบบบาง", bottom: "กางเกงยีนส์ที่ใส่สบาย", accessories: ["แว่นกันแดด"], reason: "ชุดเดินทางทั่วไปที่เน้นความคล่องตัวและสบายตัว" }
-    };
+    console.error("Error fetching from backend:", error);
+    return getFallbackData();
   }
+}
+
+function getFallbackData(): { weather: WeatherInfo; outfit: OutfitSuggestion } {
+  return {
+    weather: { temp: 99, condition: "N/A", icon: "Sun" },
+    outfit: {
+      top: "Top N/A",
+      bottom: "Bottom N/A",
+      accessories: ["N/A"],
+      reason: "Reason N/A",
+    },
+  };
 }
