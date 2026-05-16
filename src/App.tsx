@@ -123,7 +123,7 @@ export default function App() {
                   <Box w={24} h={24} style={{ border: '2px solid black', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '10px' }}>W</Box>
                   <Text size="10px" fw={900} style={{ letterSpacing: '0.2em' }}>ผู้ที่รักการเดินทาง</Text>
                </Group>
-               <Badge variant="dot" color="blue" size="xs">V1.1.0</Badge>
+               <Badge variant="dot" color="green" size="xs">V1.2.0 (Backend)</Badge>
              </Group>
           </Box>
         </Stack>
