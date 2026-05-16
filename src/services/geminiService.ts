@@ -2,8 +2,7 @@ import { TravelDay, WeatherInfo, OutfitSuggestion } from "../types";
 
 // Get the backend API URL
 const getBackendURL = () => {
-  // Use relative path by default to work with the integrated backend
-  return import.meta.env.VITE_API_URL || "";
+  return import.meta.env.VITE_API_URL || "https://markujun-service-1005290122840.asia-southeast1.run.app";
 };
 
 export async function getEnrichedDayData(day: TravelDay): Promise<{ weather: WeatherInfo; outfit: OutfitSuggestion }> {
