@@ -160,9 +160,14 @@ export default function DayDetails({ day, weather, outfit, loading, planMarkdown
             <Stack gap="xs">
               <Group gap="xs" bg="blue.0" px="sm" py={4} style={{ borderRadius: '100px', width: 'fit-content' }}>
                 <MapPin size={14} color="var(--mantine-color-blue-6)" />
-                <Text size="10px" fw={900} style={{ textTransform: 'uppercase', letterSpacing: '0.1em' }} c="blue.6">{day.date}</Text>
+                <Text size="10px" fw={900} style={{ textTransform: 'uppercase', letterSpacing: '0.1em' }} c="blue.6">
+                  {day.location || "Japan"} {day.destinationContext ? `• ${day.destinationContext}` : ''}
+                </Text>
               </Group>
               <Title order={2} fw={900} size="42px" style={{ letterSpacing: '-0.04em' }}>{day.title}</Title>
+              <Text size="xs" c="dimmed" fw={700} style={{ textTransform: 'uppercase', letterSpacing: '0.1em' }} ml={4}>
+                แผนที่วางไว้สำหรับวันที่ {day.date}
+              </Text>
             </Stack>
 
             <Box
@@ -200,28 +205,7 @@ export default function DayDetails({ day, weather, outfit, loading, planMarkdown
         </Box>
       </Box>
 
-      {/* Support Card - Spanning 12 now or 4 depending on preference, let's keep it 4 but maybe centered or tucked away */}
-      <Box style={{ gridColumn: isLarge ? 'span 4' : 'span 12' }}>
-        <Box
-          component={motion.div}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bento-card"
-          style={{ backgroundColor: 'var(--mantine-color-emerald-0)', borderColor: 'var(--mantine-color-emerald-1)' }}
-        >
-          <Group gap="md">
-            <Box bg="emerald.6" p="md" style={{ borderRadius: '16px', color: 'white' }}>
-              <ShieldCheck size={20} />
-            </Box>
-            <Stack gap={0}>
-              <Text size="sm" fw={900} c="emerald.9" style={{ textTransform: 'uppercase' }}>แผนที่ปลอดภัย</Text>
-              <Text size="xs" c="emerald.7" style={{ opacity: 0.7 }}>ตรวจสอบโดยตัวแทน Wanderlust</Text>
-            </Stack>
-          </Group>
-        </Box>
-      </Box>
     </Box>
-);
+  );
 }
 

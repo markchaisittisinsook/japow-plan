@@ -2,6 +2,8 @@ export interface TravelDay {
   date: string;
   title: string;
   description: string;
+  location?: string;
+  destinationContext?: string;
   activities: string[];
 }
 

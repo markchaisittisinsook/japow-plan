@@ -43,6 +43,10 @@ export function parseTravelPlan(markdown: string): TravelPlan {
     } else if (currentDay) {
       if (line.startsWith("- ")) {
         currentDay.activities.push(line.replace("- ", ""));
+      } else if (line.startsWith("Location: ")) {
+        currentDay.location = line.replace("Location: ", "");
+      } else if (line.startsWith("Context: ")) {
+        currentDay.destinationContext = line.replace("Context: ", "");
       } else {
         currentDay.description += (currentDay.description ? "\n" : "") + line;
       }

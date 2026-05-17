@@ -8,7 +8,11 @@ const getBackendURL = () => {
 export async function getEnrichedDayData(day: TravelDay): Promise<{ weather: WeatherInfo; outfit: OutfitSuggestion }> {
   try {
     const backendURL = getBackendURL();
-    const response = await fetch(`${backendURL}/api/gh-pages/travel/enrich-day`, {
+    const fullURL = `${backendURL}/api/gh-pages/travel/enrich-day`;
+    
+    console.log(`>>> [DEBUG] Fetching from: ${fullURL}`);
+    
+    const response = await fetch(fullURL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -17,6 +21,8 @@ export async function getEnrichedDayData(day: TravelDay): Promise<{ weather: Wea
         title: day.title,
         date: day.date,
         description: day.description,
+        location: day.location || "Japan", // Default to Japan or something sensible
+        destinationContext: day.destinationContext || "destination",
         activities: day.activities,
       }),
     });
